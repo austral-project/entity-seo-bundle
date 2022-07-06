@@ -1,0 +1,92 @@
+pages:
+  names:
+    seoRedirect:
+      singular:                                 Redirection
+      plural:                                   Redirections
+    seo:
+      singular:                                 Seo
+      plural:                                   Seo
+    seoSeo:
+      singular:                                 Optimisation du SEO
+      plural:                                   Optimisation du SEO
+      subTitle:                                 Vue d’ensembles des titres et descriptions des pages
+      buttons:
+        seoSeo:                                 Titres & descriptions
+        seoSeoUrl:                              URLs
+        seoSeoAll:                              Résultats Google
+    seoSeoUrl:
+      singular:                                 Optimisation du SEO
+      plural:                                   Optimisation du SEO
+    seoSeoAll:
+      singular:                                 Optimisation du SEO
+      plural:                                   Optimisation du SEO
+
+actions:
+  goTo:                                         Allez sur la page
+
+seo:
+  entitled:
+    columns:
+      title:                                    Nom de la page
+
+help:
+  refH1:                                        Si nul, le nom sera utilisé
+
+fieldset:
+  robotParameters:                              Parametres de Robot
+  seoParameters:                                Parametres SEO
+
+fields:
+  status:
+    entitled:                                   Statut
+  refH1:
+    entitled:                                   Titre principal <span class=little>(Si nul, le nom est utilisé)</span>
+  refTitle:
+    entitled:                                   Titre du navigateur
+  refDescription:
+    entitled:                                   Description metadata
+  refUrlLast:
+    entitled:                                   url de la page
+  canonical:
+    entitled:                                   Url canonical
+  isIndex:
+    entitled:                                   Index
+    information:                                Permet d’indiquer si une page peut être indexée par les moteurs de recherche.
+  isFollow:
+    entitled:                                   Follow
+    information:                                Permet d’indiquer si les moteurs de recherche peuvent suivre les liens présents dans la page
+  inSitemap:
+    entitled:                                   Sitemap
+    information:                                Permet d’indiquer si une page peut être indexée par les moteurs de recherche.
+  urlSource:
+    entitled:                                   Url source
+  urlDestination:
+    entitled:                                   Url de destination
+  statusCode:
+    entitled:                                   Statut code
+  relationEntityName:
+    entitled:                                   Relation - Entity Name
+  relationEntityId:
+    entitled:                                   Relation - Entity id
+  isAutoGenerate:
+    entitled:                                   Est auto generé ?
+  internalLink:
+    entitled:                                   Lien interne
+
+choices:
+  status:
+    unpublished:                                Désactivé
+    draft:                                      Brouillon
+    published:                                  Publié
+
+configuration:
+  check:
+    modules:
+      entitySeo:
+        title:                                  Seo bundle
+        redirection:
+          entitled:                             Redirection auto ?
+        refTitle:
+          entitled:                             Nombre de caractères pour la balise meta titre
+        refDescription:
+          entitled:                             Nombre de caractères pour la balise meta description

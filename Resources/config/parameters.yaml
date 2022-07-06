@@ -1,0 +1,8 @@
+parameters:
+
+##### Entities Class
+  austral.entity.redirection.class:                                     App\Entity\Austral\EntitySeoBundle\Redirection
+
+##### Doctrine Resolve target Entities
+  austral.resolve_target_entities.entity_seo:
+    Austral\EntitySeoBundle\Entity\Interfaces\RedirectionInterface:     "%austral.entity.redirection.class%"

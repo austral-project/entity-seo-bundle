@@ -1,0 +1,19 @@
+<div class="google-visualisation-content">
+  <div class="google-visualisation">
+    <span class="picto google-logo"></span>
+    <div class="contenu">
+      <div class="url">
+        <span class="beforeValue">https://{{ field.vars.domain }}{{ form.mapper.object.getBaseUrl() }}</span>
+        <span class="value" data-refresh-value-by="#{{ form.mapper.name }}_refUrlLast">{{ form.mapper.object.refUrlLast ?? "" }}</span>
+      </div>
+      <div class="title">
+        <span class="value" data-refresh-value-by="#{{ form.mapper.name }}_refTitle" data-default-value="{{ "fields.refTitle.entitled"|trans({}, form.mapper.translateDomain) }}">
+          {{ form.mapper.object.refTitle ?? "fields.refTitle.entitled"|trans({}, form.mapper.translateDomain) }}
+        </span>
+      </div>
+      <div class="description" data-default-value="">
+        <span class="value" data-refresh-value-by="#{{ form.mapper.name }}_refDescription">{{ form.mapper.object.refDescription ?? "" }}</span>
+      </div>
+    </div>
+  </div>
+</div>

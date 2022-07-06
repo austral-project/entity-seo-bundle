@@ -1,0 +1,33 @@
+{
+  "name":                                     "austral/entity-seo-bundle",
+  "type":                                     "symfony-bundle",
+  "description":                              "Seo Entity for Austral",
+  "keywords":                                 ["Austral", "Seo Entity", "Symfony"],
+  "license":                                  "MIT",
+  "homepage":                                 "https://austral.dev",
+  "version":                                  "3.0",
+  "authors": [
+    {
+      "name":                                 "Matthieu Beurel",
+      "email":                                "matthieu@austral.dev",
+      "role":                                 "Developer"
+    }
+  ],
+  "require": {
+    "php":                                    "^7.4 || ^8.0",
+
+    "austral/tools-bundle":                   "^3.0",
+    "austral/entity-bundle":                  "^3.0",
+
+    "symfony/config":                         "^5.4"
+  },
+  "config": {
+    "sort-packages":                          true
+  },
+  "require-dev": {
+  },
+  "autoload": {
+    "psr-4": { "Austral\\EntitySeoBundle\\": "" }
+  },
+  "minimum-stability":                        "dev"
+}

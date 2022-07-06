@@ -1,0 +1,43 @@
+services:
+  _defaults:
+    public:       true
+
+
+##### Austral Event Subscriber
+  austral.entity_seo.event_subscriber:
+    class:        Austral\EntitySeoBundle\EventSubscriber\PagesSubscriber
+    tags:
+      - { name: kernel.event_subscriber}
+
+##### Services #####
+  austral.entity_seo.page_url_generator:
+    class:        Austral\EntitySeoBundle\Services\PageUrlGenerator
+    arguments:    ["@doctrine.orm.entity_manager", "@austral.entity_seo.config", "@austral.entity_manager.redirection"]
+
+  austral.entity_seo.pages:
+    class:        Austral\EntitySeoBundle\Services\Pages
+    arguments:    ["@request_stack","@doctrine.orm.entity_manager", "@event_dispatcher", "@security.authorization_checker"]
+
+##### Listener #####
+  austral.entity_seo.doctrine.listener:
+    class:        Austral\EntitySeoBundle\Listener\DoctrineListener
+    arguments:    ["@austral.entity_seo.page_url_generator"]
+    tags:
+      - { name: doctrine.event_subscriber, connection: default }
+
+  austral.entity_seo.entity_manager.listener:
+    class:          Austral\EntitySeoBundle\Listener\EntityManagerListener
+    tags:
+      - { name: kernel.event_listener, event: "austral.entity_manager.duplicate", method: duplicate }
+
+##### Entities Manager #####
+
+  ##### Redirection Entity Manager
+  austral.entity_manager.redirection:
+    class:        Austral\EntitySeoBundle\EntityManager\RedirectionEntityManager
+    arguments:    [ "@doctrine.orm.entity_manager",  "@event_dispatcher", "%austral.entity.redirection.class%" ]
+
+##### Parameters #####
+  austral.entity_seo.config:
+    class:        Austral\EntitySeoBundle\Configuration\EntitySeoConfiguration
+    arguments:    ["%austral_entity_seo%"]

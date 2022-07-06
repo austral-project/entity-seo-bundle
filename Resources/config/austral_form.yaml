@@ -1,0 +1,13 @@
+services:
+  _defaults:
+    autowire:       true
+    autoconfigure:  true
+    public:         true
+
+##### Listener
+
+  austral.entity_seo.form.listener:
+    class:          Austral\EntitySeoBundle\Listener\FormListener
+    arguments:      ["@request_stack","@austral.entity_seo.config", "@router","@security.authorization_checker"]
+    tags:
+      - { name: kernel.event_listener, event: "austral.event.form.add_auto_fields_after", method: formAddAutoFields }

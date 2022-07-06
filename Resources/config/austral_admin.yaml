@@ -1,0 +1,55 @@
+services:
+  _defaults:
+    autowire:       false
+    autoconfigure:  false
+    public:         true
+
+  ##### Listener
+  austral.entity_seo.configuration_checker.listener:
+    class:          Austral\EntitySeoBundle\Listener\ConfigurationCheckerListener
+    arguments:      ["@austral.entity_seo.config"]
+    tags:
+      - { name: kernel.event_listener, event: "austral.event.admin.configuration_checker", method: configurationChecker }
+
+parameters:
+
+  austral.admin.class.seo.class:                                    Austral\EntitySeoBundle\Admin\SeoAdmin
+  austral.admin.class.redirection.class:                            Austral\EntitySeoBundle\Admin\RedirectionAdmin
+
+  austral.admin.modules.entity_seo_bundle.seo.enabled:              true
+  austral.admin.modules.entity_seo_bundle.seo.seo.enabled:          true
+  austral.admin.modules.entity_seo_bundle.seo.redirection.enabled:  true
+
+  austral_admin.modules.entity_seo_bundle:
+    seo:
+      enabled:                    "%austral.admin.modules.entity_seo_bundle.seo.enabled%"
+      navigation:
+        position:                 520
+      name:                       "Seo"
+      picto:                      "austral-picto-search"
+      route:                      "seo"
+      translate:                  "male_c"
+      actions:
+        index:                    "listChildrenModules"
+      children:
+        redirection:
+          enabled:                "%austral.admin.modules.entity_seo_bundle.seo.redirection.enabled%"
+          name:                   "Redirection"
+          pictoTile:              "parameters"
+          picto:                  "austral-picto-repeat"
+          route:                  "redirect"
+          class:                  "%austral.admin.class.redirection.class%"
+          translate:              "female_c"
+          truncate:               true
+        seo:
+          enabled:                "%austral.admin.modules.entity_seo_bundle.seo.seo.enabled%"
+          name:                   "Seo"
+          picto:                  "austral-picto-file-text"
+          pictoTile:              "parameters"
+          route:                  "seo"
+          class:                  "%austral.admin.class.seo.class%"
+          actions:
+            index:                "index"
+            url:                  "url"
+            all:                  "all"
+          translate:              "male_c"
