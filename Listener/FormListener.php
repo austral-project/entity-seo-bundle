@@ -84,7 +84,8 @@ class FormListener
       $seoParametersFieldset = $formEvent->getFormMapper()->addFieldset("fieldset.seoParameters");
       if($type === FormEvent::EVENT_AUSTRAL_FORM_ADD_AUTO_FIELDS_AFTER)
       {
-        $formEvent->getFormMapper()->addAction(new Action("goTo", "actions.goTo",
+        try {
+          $formEvent->getFormMapper()->addAction(new Action("goTo", "actions.goTo",
             $this->router->generate("austral_website_page", array("slug" => $object->getRefUrl())),
             "austral-picto-corner-forward",
             array(
@@ -94,7 +95,10 @@ class FormListener
               ),
             )
           ), 99
-        );
+          );
+        } catch(\Exception $e) {
+
+        }
         $seoParametersFieldset->add(Field\TextField::create("refH1"));
       }
 
