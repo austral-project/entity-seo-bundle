@@ -14,6 +14,7 @@ use Austral\EntitySeoBundle\Configuration\EntitySeoConfiguration;
 use Austral\EntitySeoBundle\Entity\Interfaces\EntityRobotInterface;
 use Austral\EntitySeoBundle\Entity\Interfaces\EntitySeoInterface;
 use Austral\EntitySeoBundle\Form\Field\PathField;
+use Austral\EntityTranslateBundle\Entity\Interfaces\EntityTranslateMasterInterface;
 use Austral\FormBundle\Event\FormEvent;
 use Austral\FormBundle\Field as Field;
 use Austral\FormBundle\Mapper\GroupFields;
@@ -85,8 +86,16 @@ class FormListener
       if($type === FormEvent::EVENT_AUSTRAL_FORM_ADD_AUTO_FIELDS_AFTER)
       {
         try {
+          $routeParameters = array("slug" => $object->getRefUrl());
+          if($this->router->getRouteCollection()->get("austral_website_page")->getRequirement("_locale"))
+          {
+            if($object instanceof EntityTranslateMasterInterface)
+            {
+              $routeParameters["_locale"] = $object->getLanguageCurrent();
+            }
+          }
           $formEvent->getFormMapper()->addAction(new Action("goTo", "actions.goTo",
-            $this->router->generate("austral_website_page", array("slug" => $object->getRefUrl())),
+            $this->router->generate("austral_website_page", $routeParameters),
             "austral-picto-corner-forward",
             array(
               "class"   =>  "button-picto",
