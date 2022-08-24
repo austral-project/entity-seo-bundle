@@ -40,8 +40,8 @@ fields:
   status:
     entitled:                                   Status
   refH1:
-    entitled:                                   Main title <span class=little>(If null, the name is used)</span>
-    placeholder:                                Enter the main title H1 ...
+    entitled:                                   Title H1
+    placeholder:                                If not filled in, use of the main title
   refTitle:
     entitled:                                   Browser title
   refDescription:

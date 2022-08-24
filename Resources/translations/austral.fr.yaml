@@ -40,7 +40,8 @@ fields:
   status:
     entitled:                                   Statut
   refH1:
-    entitled:                                   Titre principal <span class=little>(Si nul, le nom est utilisé)</span>
+    entitled:                                   Titre H1
+    placeholder:                                Si non renseigné, utilisation du titre principal
   refTitle:
     entitled:                                   Titre du navigateur
   refDescription:
