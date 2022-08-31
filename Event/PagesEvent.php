@@ -10,8 +10,8 @@
 
 namespace Austral\EntitySeoBundle\Event;
 
-use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\EntityManagerInterface;
+use Austral\EntitySeoBundle\Entity\Interfaces\EntitySeoInterface;
+use Austral\EntitySeoBundle\Services\Pages;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -22,67 +22,67 @@ use Symfony\Contracts\EventDispatcher\Event;
 class PagesEvent extends Event
 {
 
-  const EVENT_SELECT_OBJECTS = "austral.entity_seo.select_objects";
+  const EVENT_PAGE_INIT = "austral.entity_seo.page.init";
+  const EVENT_PAGE_OBJECT_PUSH = "austral.entity_seo.page.object.push";
+  const EVENT_PAGE_FINISH = "austral.entity_seo.page.finish";
 
   /**
-   * @var EntityManagerInterface
+   * @var Pages
    */
-  private EntityManagerInterface $entityManager;
+  private Pages $pages;
 
   /**
-   * @var string
+   * @var EntitySeoInterface|null
    */
-  private string $classname;
-
-  /**
-   * @var AbstractQuery|null
-   */
-  private ?AbstractQuery $query = null;
+  private ?EntitySeoInterface $object = null;
 
   /**
    * PagesEvent constructor.
    *
-   * @param EntityManagerInterface $entityManager
-   * @param string $classname
+   * @param Pages $pages
+   * @param EntitySeoInterface|null $object
    */
-  public function __construct(EntityManagerInterface $entityManager, string $classname)
+  public function __construct(Pages $pages, ?EntitySeoInterface $object = null)
   {
-    $this->entityManager = $entityManager;
-    $this->classname = $classname;
+    $this->pages = $pages;
+    $this->object = $object;
   }
 
   /**
-   * @return string
+   * @return Pages
    */
-  public function getClassname(): string
+  public function getPages(): Pages
   {
-    return $this->classname;
+    return $this->pages;
   }
 
   /**
-   * @return EntityManagerInterface
-   */
-  public function getEntityManager(): EntityManagerInterface
-  {
-    return $this->entityManager;
-  }
-
-  /**
-   * @return AbstractQuery|null
-   */
-  public function getQuery(): ?AbstractQuery
-  {
-    return $this->query;
-  }
-
-  /**
-   * @param AbstractQuery $query
+   * @param Pages $pages
    *
-   * @return PagesEvent
+   * @return $this
    */
-  public function setQuery(AbstractQuery $query): PagesEvent
+  public function setPages(Pages $pages): PagesEvent
   {
-    $this->query = $query;
+    $this->pages = $pages;
+    return $this;
+  }
+
+  /**
+   * @return EntitySeoInterface|null
+   */
+  public function getObject(): ?EntitySeoInterface
+  {
+    return $this->object;
+  }
+
+  /**
+   * @param EntitySeoInterface|null $object
+   *
+   * @return $this
+   */
+  public function setObject(?EntitySeoInterface $object): PagesEvent
+  {
+    $this->object = $object;
     return $this;
   }
 
