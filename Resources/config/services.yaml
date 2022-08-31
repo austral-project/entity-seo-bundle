@@ -7,7 +7,7 @@ services:
   austral.entity_seo.event_subscriber:
     class:        Austral\EntitySeoBundle\EventSubscriber\PagesSubscriber
     tags:
-      - { name: kernel.event_subscriber}
+      - { name: kernel.event_subscriber }
 
 ##### Services #####
   austral.entity_seo.page_url_generator:

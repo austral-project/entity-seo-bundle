@@ -13,6 +13,7 @@ use Austral\EntityBundle\Entity\EntityInterface;
 use Austral\EntitySeoBundle\Entity\Interfaces\EntitySeoInterface;
 use Austral\EntitySeoBundle\Entity\Traits\EntityRobotTrait;
 use Austral\EntitySeoBundle\Event\PagesEvent;
+use Austral\EntitySeoBundle\Event\PagesSelectObjectsEvent;
 use Austral\ToolsBundle\AustralTools;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -236,39 +237,94 @@ Class Pages
   {
     if(!$this->objects)
     {
+      $pagesEvent = new PagesEvent($this);
+      $this->dispatcher->dispatch($pagesEvent, PagesEvent::EVENT_PAGE_INIT);
       $this->objectsByEntity = array();
-      foreach($this->entities as $entityName => $className)
+      foreach($this->entities as $className)
       {
         $objects = $this->selectObjectsSeo($className);
         $this->objects = array_merge($this->objects, $objects);
-        
-        $this->objectsByEntity[$entityName] = array();
-        $this->urlsByEntity[$entityName] = array();
-        
-        foreach($objects as $object)
-        {
-          $this->objectsByEntity[$entityName][$object->getId()] = $object;
-          $this->objectsByCode["{$object->getClassname()}_{$object->getKeyname()}"] = $object;
-          $this->urlsByEntity[$entityName][$object->getRefUrl()] = $object;
-          if(array_key_exists($object->getRefUrl(), $this->urls))
-          {
-            if(array_key_exists($object->getRefUrl(), $this->conflictUrls))
-            {
-              $this->conflictUrls[$object->getRefUrl()] = array();
-            }
-            $this->conflictUrls[$object->getRefUrl()][] = $object;
-          }
-          else
-          {
-            $this->urls[$object->getRefUrl()] = $object;
-          }
-          ksort($this->urlsByEntity[$entityName]);
-        }
       }
+
+      /** @var EntityInterface|EntitySeoInterface $object */
+      foreach($this->objects as $object)
+      {
+        $this->pushObject($object);
+        $pagesEvent->setObject($object);
+        $pagesEvent = new PagesEvent($this, $object);
+        $this->dispatcher->dispatch($pagesEvent, PagesEvent::EVENT_PAGE_OBJECT_PUSH);
+      }
+      $pagesEvent = new PagesEvent($this);
+      $this->dispatcher->dispatch($pagesEvent, PagesEvent::EVENT_PAGE_FINISH);
     }
     ksort($this->urls);
     ksort($this->urlsByEntity);
     ksort($this->objectsByCode);
+    return $this;
+  }
+
+  /**
+   * @param EntitySeoInterface|EntityInterface $object
+   *
+   * @return $this
+   */
+  public function pushObject(EntitySeoInterface $object): Pages
+  {
+    if(AustralTools::usedImplements(get_class($object), EntitySeoInterface::class))
+    {
+      $entityName = $object->getClassnameForMapping();
+      if(!array_key_exists($entityName, $this->objectsByEntity))
+      {
+        $this->objectsByEntity[$entityName] = array();
+      }
+      if(!array_key_exists($entityName, $this->urlsByEntity))
+      {
+        $this->urlsByEntity[$entityName] = array();
+      }
+      $this->objectsByEntity[$entityName][$object->getId()] = $object;
+      $this->objectsByCode["{$object->getClassnameForMapping()}_{$object->getKeyname()}"] = $object;
+      $this->addObjectUrl($object, $object->getRefUrl());
+    }
+    return $this;
+  }
+
+  /**
+   * @param EntitySeoInterface $object
+   * @param string|null $url
+   *
+   * @return $this
+   */
+  public function addObjectUrl(EntitySeoInterface $object, ?string $url = ""): Pages
+  {
+    $this->urlsByEntity[$object->getClassnameForMapping()][$url] = $object;
+    if(array_key_exists($url, $this->urls))
+    {
+      if(array_key_exists($url, $this->conflictUrls))
+      {
+        $this->conflictUrls[$url] = array();
+      }
+      $this->conflictUrls[$url][$object->getId()] = $object;
+    }
+    else
+    {
+      $this->urls[$url] = $object;
+    }
+    ksort($this->urlsByEntity[$object->getClassnameForMapping()]);
+    return $this;
+  }
+
+  /**
+   * @param string $url
+   *
+   * @return $this
+   */
+  public function removeUrl(string $url): Pages
+  {
+    if($object = $this->retreiveByRefUrl($url))
+    {
+      unset($this->urls[$url]);
+      unset($this->urlsByEntity[$object->getClassname()][$url]);
+    }
     return $this;
   }
 
@@ -279,8 +335,8 @@ Class Pages
    */
   protected function selectObjectsSeo($className): array
   {
-    $pagesEvent = new PagesEvent($this->entityManager, $className);
-    $this->dispatcher->dispatch($pagesEvent, PagesEvent::EVENT_SELECT_OBJECTS);
+    $pagesEvent = new PagesSelectObjectsEvent($this->entityManager, $className, $this->byStatus);
+    $this->dispatcher->dispatch($pagesEvent, PagesSelectObjectsEvent::EVENT_SELECT_OBJECTS);
     if(!$query = $pagesEvent->getQuery())
     {
       $queryBuilder = $this->entityManager->getRepository($className)->createQueryBuilder("pages");
@@ -321,7 +377,7 @@ Class Pages
         }
       }
 
-      if($this->getHomepageId()) 
+      if($this->getHomepageId())
       {
         $queryBuilder->andWhere("pages.homepageId = :homepageId")
           ->setParameter("homepageId", $this->getHomepageId());
@@ -377,13 +433,13 @@ Class Pages
   }
 
   /**
-   * @param $refurl
+   * @param $url
    *
    * @return EntitySeoInterface|EntityInterface|null
    */
-  public function retreiveByRefUrl($refurl): ?EntitySeoInterface
+  public function retreiveByRefUrl($url): ?EntitySeoInterface
   {
-    return AustralTools::getValueByKey($this->getUrls(), $refurl, null);
+    return AustralTools::getValueByKey($this->getUrls(), $url, null);
   }
 
   /**
@@ -411,6 +467,24 @@ Class Pages
       return AustralTools::getValueByKey($objectsByEntity, $id, null);
     }
     return null;
+  }
+
+  /**
+   * @param string $entitName
+   *
+   * @return string|null
+   */
+  public function retreiveEntityName(string $entitName): ?string
+  {
+    return AustralTools::getValueByKey($this->entities, $entitName, null);
+  }
+
+  /**
+   * @return array
+   */
+  public function getConflictUrls(): array
+  {
+    return $this->conflictUrls;
   }
 
   /**

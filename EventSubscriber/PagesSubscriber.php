@@ -12,6 +12,7 @@
 namespace Austral\EntitySeoBundle\EventSubscriber;
 
 use Austral\EntitySeoBundle\Event\PagesEvent;
+use Austral\EntitySeoBundle\Event\PagesSelectObjectsEvent;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -29,14 +30,38 @@ class PagesSubscriber implements EventSubscriberInterface
   public static function getSubscribedEvents()
   {
     return [
-      PagesEvent::EVENT_SELECT_OBJECTS  =>  ["selectObjects", 1024],
+      PagesEvent::EVENT_PAGE_INIT                     =>  ["pageInit", 1024],
+      PagesSelectObjectsEvent::EVENT_SELECT_OBJECTS   =>  ["selectObjects", 1024],
+      PagesEvent::EVENT_PAGE_OBJECT_PUSH              =>  ["objectPush", 1024],
+      PagesEvent::EVENT_PAGE_FINISH                   =>  ["pageFinish", 1024],
     ];
   }
 
   /**
    * @param PagesEvent $pagesEvent
    */
-  public function selectObjects(PagesEvent $pagesEvent)
+  public function pageInit(PagesEvent $pagesEvent)
+  {
+  }
+
+  /**
+   * @param PagesEvent $pagesEvent
+   */
+  public function pageFinish(PagesEvent $pagesEvent)
+  {
+  }
+
+  /**
+   * @param PagesEvent $pagesEvent
+   */
+  public function objectPush(PagesEvent $pagesEvent)
+  {
+  }
+
+  /**
+   * @param PagesSelectObjectsEvent $pagesSelectObjectsEvent
+   */
+  public function selectObjects(PagesSelectObjectsEvent $pagesSelectObjectsEvent)
   {
   }
 
